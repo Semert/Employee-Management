@@ -2,10 +2,9 @@
 
 A web application built with LitElement to help HR staff manage employee information efficiently. This application allows users to list, add, edit, and delete employee records with a modern, responsive UI.
 
-![Employee Management Screenshot](screenshot.png)
+![Employee Management Screenshot](https://github.com/user-attachments/assets/da9531e4-d91d-4506-9437-2046361d8124)
 
 ## Features
-
 ### Employee Records Management
 
 - **List View**: View all employees in either list or table format with pagination and search functionality
