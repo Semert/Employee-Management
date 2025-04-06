@@ -88,10 +88,16 @@ employee-management-app/
 3. Start the development server
 
    ```
-   npm start
+   npm run serve
    ```
 
 4. Open your browser and navigate to `http://localhost:8000`
+
+## Test
+
+    ```
+    npm test
+    ```
 
 ## Development Notes
 
