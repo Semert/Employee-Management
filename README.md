@@ -5,6 +5,7 @@ A web application built with LitElement to help HR staff manage employee informa
 ![Employee Management Screenshot](https://github.com/user-attachments/assets/da9531e4-d91d-4506-9437-2046361d8124)
 
 ## Features
+
 ### Employee Records Management
 
 - **List View**: View all employees in either list or table format with pagination and search functionality
@@ -124,10 +125,3 @@ The application validates that:
 
 - Run tests with `npm test`
 - Coverage ratio exceeds 95% across all components
-
-## Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
