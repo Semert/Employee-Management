@@ -165,7 +165,6 @@ export class NavigationMenu extends LocalizeMixin(LitElement) {
       <div class="container">
         <a href="/" class="logo" @click="${(e) => this.navigateTo('/', e)}">
           <div class="logo-icon">ING</div>
-          ${this.t('app.title')}
         </a>
 
         <div class="nav-links">

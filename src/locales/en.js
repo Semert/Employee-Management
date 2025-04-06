@@ -67,7 +67,8 @@ export default {
 
   // Confirmation
   'confirm.delete.title': 'Are you sure?',
-  'confirm.delete.message': 'Selected Employee record will be deleted',
+  'confirm.delete.message': 'Selected Employee record of',
+  'confirm.delete.will': 'will be deleted',
   'confirm.update.title': 'Are you sure?',
   'confirm.update.message': 'Employee record will be updated',
 };

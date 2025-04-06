@@ -124,7 +124,7 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
     th {
       background-color: #f8f8f8;
       font-weight: bold;
-      color: #333;
+      color: #ff6b00;
     }
 
     .checkbox {
@@ -629,7 +629,10 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
           ? html`
               <confirmation-dialog
                 .title="${this.t('confirm.delete.title')}"
-                .message="${this.t('confirm.delete.message')}"
+                .message="${this.t('confirm.delete.message')} ${this
+                  .employeeToDelete
+                  ? `${this.employeeToDelete.firstName} ${this.employeeToDelete.lastName}`
+                  : ''} ${this.t('confirm.delete.will')}"
                 .open="${true}"
                 @proceed="${this.confirmDelete}"
                 @cancel="${this.cancelDelete}"

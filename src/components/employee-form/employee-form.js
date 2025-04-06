@@ -77,6 +77,7 @@ class EmployeeForm extends LocalizeMixin(connect(store)(LitElement)) {
     select {
       width: 100%;
       padding: 1rem 0;
+      padding-left: 12px;
       border: 2px solid #e0e0e0;
       border-radius: 8px;
       font-size: 1.05rem;
