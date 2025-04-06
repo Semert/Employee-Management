@@ -3,7 +3,12 @@
   "extends": ["eslint:recommended"],
   "parser": "@babel/eslint-parser",
   "globals": {
-    "chai": "readonly"
+    "chai": "readonly",
+    "expect": "readonly",
+    "fixture": "readonly",
+    "fixtureCleanup": "readonly",
+    "html": "readonly",
+    "sinon": "readonly"
   },
   "parserOptions": {
     "requireConfigFile": false,
@@ -11,6 +16,7 @@
   },
   "env": {
     "browser": true,
+    "es2020": true,
     "mocha": true
   },
   "rules": {
