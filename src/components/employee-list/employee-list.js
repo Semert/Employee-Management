@@ -25,6 +25,7 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
   static styles = css`
     :host {
       display: block;
+      padding: 1rem;
     }
 
     .header {
@@ -240,6 +241,7 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
       margin: 2rem 0;
     }
 
+    /* Mobile responsive adjustments */
     @media (max-width: 768px) {
       .header {
         flex-direction: column;
@@ -255,6 +257,24 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
       .search-box {
         max-width: none;
       }
+
+      table,
+      th,
+      td {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+      }
+
+      .actions,
+      .card-footer {
+        flex-direction: column;
+        align-items: flex-end;
+      }
+
+      /* Hide the table view toggle on mobile to force card view */
+      .view-toggle.table-toggle {
+        display: none;
+      }
     }
   `;
 
@@ -268,6 +288,24 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
     this.filterText = '';
     this.showDeleteConfirmation = false;
     this.employeeToDelete = null;
+    this._resizeHandler = this._handleResize.bind(this);
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+    window.addEventListener('resize', this._resizeHandler);
+    this._handleResize();
+  }
+
+  disconnectedCallback() {
+    super.disconnectedCallback();
+    window.removeEventListener('resize', this._resizeHandler);
+  }
+
+  _handleResize() {
+    if (window.innerWidth < 1100 && this.viewMode !== 'list') {
+      store.dispatch(setViewMode('list'));
+    }
   }
 
   stateChanged(state) {
@@ -284,7 +322,11 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
   }
 
   handleViewModeChange(mode) {
-    store.dispatch(setViewMode(mode));
+    if (window.innerWidth < 768) {
+      store.dispatch(setViewMode('list'));
+    } else {
+      store.dispatch(setViewMode(mode));
+    }
   }
 
   handlePageChange(page) {
@@ -292,7 +334,6 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
   }
 
   handleEdit(employee) {
-    // Navigate to edit page
     const path = `/edit/${employee.id}`;
     history.pushState({employee}, '', path);
     window.dispatchEvent(
@@ -332,15 +373,10 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
   renderPageNumbers() {
     const pages = [];
     const totalPages = this.getTotalPages();
-
-    // Always show first page, last page, and pages around current page
-    const delta = 2; // Number of pages to show before and after current page
-
-    // Calculate range
+    const delta = 2;
     let leftBound = Math.max(1, this.currentPage - delta);
     let rightBound = Math.min(totalPages, this.currentPage + delta);
 
-    // Adjust range if needed
     if (leftBound > 1) {
       pages.push(
         html`<button
@@ -355,7 +391,6 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
       }
     }
 
-    // Add pages in range
     for (let i = leftBound; i <= rightBound; i++) {
       pages.push(html`
         <button
@@ -367,7 +402,6 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
       `);
     }
 
-    // Add last page if not included
     if (rightBound < totalPages) {
       if (rightBound < totalPages - 1) {
         pages.push(html`<span class="ellipsis">...</span>`);
@@ -387,9 +421,7 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
 
   renderPagination() {
     const totalPages = this.getTotalPages();
-
     if (totalPages <= 1) return html``;
-
     return html`
       <div class="pagination">
         <button
@@ -399,9 +431,7 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
         >
           &lt;
         </button>
-
         ${this.renderPageNumbers()}
-
         <button
           class="page-btn"
           @click="${() => this.handlePageChange(this.currentPage + 1)}"
@@ -415,14 +445,11 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
 
   renderTableView() {
     const currentPageEmployees = this.getCurrentPageEmployees();
-
     return html`
       <table>
         <thead>
           <tr>
-            <th class="checkbox">
-              <input type="checkbox" />
-            </th>
+            <th class="checkbox"><input type="checkbox" /></th>
             <th>${this.t('employeeList.firstName')}</th>
             <th>${this.t('employeeList.lastName')}</th>
             <th>${this.t('employeeList.dateOfEmployment')}</th>
@@ -438,9 +465,7 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
           ${currentPageEmployees.map(
             (employee) => html`
               <tr>
-                <td class="checkbox">
-                  <input type="checkbox" />
-                </td>
+                <td class="checkbox"><input type="checkbox" /></td>
                 <td>${employee.firstName}</td>
                 <td>${employee.lastName}</td>
                 <td>${employee.dateOfEmployment}</td>
@@ -475,7 +500,6 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
 
   renderCardView() {
     const currentPageEmployees = this.getCurrentPageEmployees();
-
     return html`
       <div class="card-list">
         ${currentPageEmployees.map(
@@ -540,13 +564,7 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
   navigateTo(path, e) {
     e.preventDefault();
     history.pushState(null, '', path);
-
-    // Dispatch a custom event to notify the router of the change
-    window.dispatchEvent(
-      new CustomEvent('route-changed', {
-        detail: {path},
-      })
-    );
+    window.dispatchEvent(new CustomEvent('route-changed', {detail: {path}}));
   }
 
   render() {
@@ -577,8 +595,11 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
           </div>
 
           <div class="view-toggles">
+            <!-- Only show table view toggle on desktop -->
             <button
-              class="view-toggle ${this.viewMode === 'table' ? 'active' : ''}"
+              class="view-toggle table-toggle ${this.viewMode === 'table'
+                ? 'active'
+                : ''}"
               @click="${() => this.handleViewModeChange('table')}"
               title="Table View"
             >
@@ -595,9 +616,9 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
         </div>
 
         ${this.filteredEmployees.length === 0
-          ? html`
-              <div class="empty-state">${this.t('employeeList.noResults')}</div>
-            `
+          ? html`<div class="empty-state">
+              ${this.t('employeeList.noResults')}
+            </div>`
           : html`
               ${this.viewMode === 'table'
                 ? this.renderTableView()
@@ -612,7 +633,8 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
                 .open="${true}"
                 @proceed="${this.confirmDelete}"
                 @cancel="${this.cancelDelete}"
-              ></confirmation-dialog>
+              >
+              </confirmation-dialog>
             `
           : ''}
       </div>

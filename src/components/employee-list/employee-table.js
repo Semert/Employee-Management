@@ -77,6 +77,17 @@ export class EmployeeTable extends LitElement {
       .delete-btn:hover {
         background-color: rgba(0, 0, 0, 0.05);
       }
+
+      /* Mobile responsive adjustments */
+      @media (max-width: 600px) {
+        table {
+          font-size: 0.8rem;
+        }
+        th,
+        td {
+          padding: 0.5rem;
+        }
+      }
     `;
   }
 
