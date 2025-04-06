@@ -36,7 +36,7 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
     }
 
     h1 {
-      color: #333;
+      color: #ff6b00;
       margin: 0;
       font-size: 1.5rem;
     }
@@ -332,10 +332,10 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
   handlePageChange(page) {
     store.dispatch(setCurrentPage(page));
   }
-
   handleEdit(employee) {
-    const path = `/edit/${employee.id}`;
-    history.pushState({employee}, '', path);
+    const path = `#/edit/${employee.id}`;
+    window.location.hash = path;
+
     window.dispatchEvent(
       new CustomEvent('route-changed', {
         detail: {path},
@@ -563,8 +563,13 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
 
   navigateTo(path, e) {
     e.preventDefault();
-    history.pushState(null, '', path);
-    window.dispatchEvent(new CustomEvent('route-changed', {detail: {path}}));
+    window.location.hash = path;
+
+    window.dispatchEvent(
+      new CustomEvent('route-changed', {
+        detail: {path},
+      })
+    );
   }
 
   render() {
@@ -572,14 +577,6 @@ class EmployeeList extends LocalizeMixin(connect(store)(LitElement)) {
       <div>
         <div class="header">
           <h1>${this.t('employeeList.title')}</h1>
-          <a
-            href="/new"
-            class="add-button"
-            @click="${(e) => this.navigateTo('/new', e)}"
-          >
-            <span>+</span>
-            ${this.t('actions.add')}
-          </a>
         </div>
 
         <div class="controls">

@@ -9,19 +9,16 @@ export class RouterOutlet extends LitElement {
 
   constructor() {
     super();
-    this.route = window.location.pathname;
+    this.route = window.location.hash.slice(1) || '/';
 
-    // Listen for route changes from browser history
-    window.addEventListener('popstate', () => {
-      this.route = window.location.pathname;
+    window.addEventListener('hashchange', () => {
+      this.route = window.location.hash.slice(1) || '/';
       this.requestUpdate();
     });
 
-    // Listen for custom navigation events
-    window.addEventListener('route-changed', (e) => {
-      this.route = e.detail.path;
-      this.requestUpdate();
-    });
+    if (this.route === '') {
+      window.location.hash = '/';
+    }
   }
 
   render() {

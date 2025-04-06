@@ -92,6 +92,12 @@ export class ConfirmationDialog extends LitElement {
   }
 
   proceed() {
+    window.location.hash = '/';
+
+    window.dispatchEvent(
+      new CustomEvent('route-changed', {detail: {path: '/'}})
+    );
+
     this.dispatchEvent(new CustomEvent('proceed'));
   }
 

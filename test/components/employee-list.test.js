@@ -180,23 +180,19 @@ describe('employee-list', () => {
 
     await el.updateComplete;
 
-    // Directly call the handleEdit method instead of trying to find and click a button
-    // This test verifies the method works as expected
-    const historyPushStateSpy = sinon.spy(history, 'pushState');
+    // Spies for URL hash and dispatchEvent
     const dispatchEventSpy = sinon.spy(window, 'dispatchEvent');
 
-    // Call the method directly
+    // Call the handleEdit method directly
     el.handleEdit(el.employees[0]);
 
-    // Check if navigated
-    expect(historyPushStateSpy.calledOnce).to.be.true;
+    // Check if the event was dispatched
     expect(dispatchEventSpy.calledOnce).to.be.true;
 
-    // Check URL is correct
-    expect(historyPushStateSpy.firstCall.args[2]).to.include('/edit/1');
+    // Check URL is correct (assuming you set hash in the method)
+    expect(window.location.hash).to.include('#/edit/1');
 
     // Cleanup
-    historyPushStateSpy.restore();
     dispatchEventSpy.restore();
   });
 });

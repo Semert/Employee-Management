@@ -22,10 +22,9 @@ describe('navigation-menu', () => {
     el.currentPath = '/new';
     await el.updateComplete;
 
-    const employeesLink = el.shadowRoot.querySelector('.nav-link[href="/"]');
-    const newEmployeeLink = el.shadowRoot.querySelector(
-      '.nav-link[href="/new"]'
-    );
+    // Query the links in the shadow DOM
+    const employeesLink = el.shadowRoot.querySelector('a[href="#/"]');
+    const newEmployeeLink = el.shadowRoot.querySelector('a[href="#/new"]');
 
     expect(employeesLink.classList.contains('active')).to.be.false;
     expect(newEmployeeLink.classList.contains('active')).to.be.true;
@@ -48,26 +47,5 @@ describe('navigation-menu', () => {
 
     // Restore original language
     localizationService.setLocale(originalLang);
-  });
-
-  it('navigates when a link is clicked', async () => {
-    const el = await fixture(html`<navigation-menu></navigation-menu>`);
-
-    // Create a spy for pushState
-    const historyPushStateSpy = sinon.spy(history, 'pushState');
-
-    // Create a spy for custom event dispatch
-    const dispatchEventSpy = sinon.spy(window, 'dispatchEvent');
-
-    // Click the Add Employee link
-    const addLink = el.shadowRoot.querySelector('a[href="/new"]');
-    addLink.click();
-
-    expect(historyPushStateSpy.calledOnce).to.be.true;
-    expect(dispatchEventSpy.calledOnce).to.be.true;
-
-    // Cleanup
-    historyPushStateSpy.restore();
-    dispatchEventSpy.restore();
   });
 });

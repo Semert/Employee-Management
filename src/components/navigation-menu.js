@@ -115,36 +115,32 @@ export class NavigationMenu extends LocalizeMixin(LitElement) {
 
   constructor() {
     super();
-    this.currentPath = window.location.pathname;
+    this.currentPath = window.location.hash.slice(1) || '/'; // Get initial hash path
   }
 
   connectedCallback() {
     super.connectedCallback();
-    // Update active link when location changes
-    window.addEventListener('vaadin-router-location-changed', () =>
-      this.updateCurrentPath()
-    );
-    window.addEventListener('route-changed', () => this.updateCurrentPath());
+    // Update active link when hash changes
+    window.addEventListener('hashchange', () => this.updateCurrentPath());
+    // Initial path update
+    this.updateCurrentPath();
   }
 
   disconnectedCallback() {
-    window.removeEventListener('vaadin-router-location-changed', () =>
-      this.updateCurrentPath()
-    );
-    window.removeEventListener('route-changed', () => this.updateCurrentPath());
+    // Cleanup event listeners to prevent memory leaks
+    window.removeEventListener('hashchange', () => this.updateCurrentPath());
     super.disconnectedCallback();
   }
 
   updateCurrentPath() {
-    this.currentPath = window.location.pathname;
+    this.currentPath = window.location.hash.slice(1) || '/';
     this.requestUpdate();
   }
 
   navigateTo(path, e) {
     e.preventDefault();
-    history.pushState(null, '', path);
+    window.location.hash = path;
 
-    // Dispatch a custom event to notify the router of the change
     window.dispatchEvent(
       new CustomEvent('route-changed', {
         detail: {path},
@@ -163,7 +159,7 @@ export class NavigationMenu extends LocalizeMixin(LitElement) {
 
     return html`
       <div class="container">
-        <a href="/" class="logo" @click="${(e) => this.navigateTo('/', e)}">
+        <a href="#/" class="logo" @click="${(e) => this.navigateTo('/', e)}">
           <div class="logo-icon">ING</div>
         </a>
 
@@ -179,7 +175,7 @@ export class NavigationMenu extends LocalizeMixin(LitElement) {
             ${this.t('nav.employees')}
           </a>
           <a
-            href="/new"
+            href="#/new"
             class="nav-link ${this.currentPath === '/new' ? 'active' : ''}"
             @click="${(e) => this.navigateTo('/new', e)}"
           >

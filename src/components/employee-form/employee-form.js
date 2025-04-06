@@ -340,8 +340,8 @@ class EmployeeForm extends LocalizeMixin(connect(store)(LitElement)) {
       store.dispatch(addEmployee(this.employee));
     }
 
-    // Navigate back to list
-    history.pushState(null, '', '/');
+    window.location.hash = '/';
+
     window.dispatchEvent(
       new CustomEvent('route-changed', {
         detail: {path: '/'},
@@ -350,8 +350,8 @@ class EmployeeForm extends LocalizeMixin(connect(store)(LitElement)) {
   }
 
   cancel() {
-    // Navigate back to list
-    history.pushState(null, '', '/');
+    window.location.hash = '/';
+
     window.dispatchEvent(
       new CustomEvent('route-changed', {
         detail: {path: '/'},

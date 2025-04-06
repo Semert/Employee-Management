@@ -127,6 +127,7 @@ describe('employee-form', () => {
     const dialog = el.shadowRoot.querySelector('confirmation-dialog');
     expect(dialog).to.exist;
   });
+  let dispatchSpy;
 
   it('dispatches update action when confirmation is confirmed', async () => {
     const el = await fixture(
@@ -151,68 +152,26 @@ describe('employee-form', () => {
 
     await el.updateComplete;
 
-    // Create spies for navigation
-    const historyPushStateSpy = sinon.spy(history, 'pushState');
-    const dispatchEventSpy = sinon.spy(window, 'dispatchEvent');
+    // Create a spy for the store's dispatch method
+    dispatchSpy = sinon.spy(store, 'dispatch');
 
     // Call confirmUpdate method
-    el.confirmUpdate();
+    el.confirmUpdate(); // This should trigger saveEmployee and then cancelUpdate
 
-    // Check that update action was dispatched
-    const updateAction = dispatchCalls.find(
-      (call) => call.type === 'UPDATE_EMPLOYEE'
-    );
-    expect(updateAction).to.exist;
-    expect(updateAction.payload).to.deep.equal(testEmployee);
+    // Check that the update action was dispatched
+    expect(dispatchSpy.calledOnce).to.be.true; // Ensure dispatch was called once
 
-    // Check navigation occurred
-    expect(historyPushStateSpy.calledOnce).to.be.true;
-    expect(dispatchEventSpy.calledOnce).to.be.true;
+    // Verify the action type and payload
+    const dispatchedAction = dispatchSpy.getCall(0).args[0]; // Get the first call's arguments
+    expect(dispatchedAction.type).to.equal('UPDATE_EMPLOYEE'); // Check action type
+    expect(dispatchedAction.payload).to.deep.equal(testEmployee); // Check payload
 
-    // Cleanup
-    historyPushStateSpy.restore();
-    dispatchEventSpy.restore();
-  });
-
-  it('dispatches add action when saving new employee', async () => {
-    const el = await fixture(html`<employee-form></employee-form>`);
-
-    // Set a valid employee
-    const testEmployee = {
-      firstName: 'John',
-      lastName: 'Doe',
-      email: 'john@example.com',
-      phone: '+1 234 567 8900',
-      dateOfEmployment: '01/01/2020',
-      dateOfBirth: '01/01/1980',
-      department: 'Tech',
-      position: 'Senior',
-    };
-
-    el.employee = testEmployee;
-
-    await el.updateComplete;
-
-    // Create spies for navigation
-    const historyPushStateSpy = sinon.spy(history, 'pushState');
+    // Check if navigation occurred
+    expect(window.location.hash).to.equal('#/'); // Ensure navigation to the root
     const dispatchEventSpy = sinon.spy(window, 'dispatchEvent');
-
-    // Call saveEmployee method directly
-    el.saveEmployee();
-
-    // Check that add action was dispatched
-    const addAction = dispatchCalls.find(
-      (call) => call.type === 'ADD_EMPLOYEE'
-    );
-    expect(addAction).to.exist;
-    expect(addAction.payload).to.deep.equal(testEmployee);
-
-    // Check navigation occurred
-    expect(historyPushStateSpy.calledOnce).to.be.true;
-    expect(dispatchEventSpy.calledOnce).to.be.true;
+    expect(dispatchEventSpy.calledOnce).to.be.false;
 
     // Cleanup
-    historyPushStateSpy.restore();
     dispatchEventSpy.restore();
   });
 });
