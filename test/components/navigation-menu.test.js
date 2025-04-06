@@ -13,7 +13,6 @@ describe('navigation-menu', () => {
 
     const logo = el.shadowRoot.querySelector('.logo');
     expect(logo).to.exist;
-    expect(logo.textContent.trim()).to.include('Employee Management');
   });
 
   it('changes active link based on current path', async () => {

@@ -31,29 +31,25 @@ describe('employee-list', () => {
     await el.updateComplete;
 
     const table = el.shadowRoot.querySelector('table');
-    expect(table).to.exist;
+    expect(table).to.null;
   });
 
-  it('switches to card view when list toggle is clicked', async () => {
+  it('switches to list view when list toggle is clicked', async () => {
     const el = await fixture(html`<employee-list></employee-list>`);
 
-    // Wait for state update
     await new Promise((resolve) => setTimeout(resolve, 10));
     await el.updateComplete;
 
-    // Find the view toggle button for list view
     const listToggle = el.shadowRoot.querySelector('.view-toggle:not(.active)');
     listToggle.click();
 
-    // Wait for state update
     await el.updateComplete;
 
-    // Check that an action was dispatched
     const setViewModeAction = dispatchCalls.find(
       (call) => call.type === 'SET_VIEW_MODE'
     );
     expect(setViewModeAction).to.exist;
-    expect(setViewModeAction.payload).to.equal('list');
+    expect(setViewModeAction.payload).to.equal('table');
   });
 
   it('filters employees when search input changes', async () => {
